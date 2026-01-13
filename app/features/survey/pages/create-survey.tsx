@@ -1,3 +1,3 @@
 export default function CreateSurvey() {
-  return <div>Hello Create survey</div>;
+  return <div>Hello create survey</div>;
 }

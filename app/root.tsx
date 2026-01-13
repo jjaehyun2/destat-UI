@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   isRouteErrorResponse,
   Links,
@@ -5,20 +6,20 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "react-router";
-
-import type { Route } from "./+types/root";
-import "./app.css";
-import Navigation from "./components/navigation";
-
-import { createModal } from "@rabby-wallet/rabbykit";
-import { createConfig, http } from "@wagmi/core";
-import { hardhat } from "@wagmi/core/chains";
-
+} from 'react-router';
+import type { Route } from './+types/root';
+import './app.css';
+import Navigation from './components/navigation';
+import { createModal, getDefaultConfig } from '@rabby-wallet/rabbykit';
+import { createConfig, http } from '@wagmi/core';
+import { hardhat, kairos } from '@wagmi/core/chains';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WagmiProvider } from 'wagmi';
 export const config = createConfig({
-  chains: [hardhat],
+  chains: [hardhat, kairos],
   transports: {
     [hardhat.id]: http(),
+    [kairos.id]: http(),
   },
 });
 
@@ -26,6 +27,7 @@ export const rabbykit = createModal({
   wagmi: config,
 });
 
+const queryClient = new QueryClient();
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -46,24 +48,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="py-20">
-      <Navigation />
-      <Outlet />
-    </div>
+    <>
+      <div className="  py-20 px-20 h-screen">
+        <WagmiProvider config={config}>
+          <QueryClientProvider client={queryClient}>
+            <Navigation />
+            <Outlet />
+          </QueryClientProvider>
+        </WagmiProvider>
+      </div>
+    </>
   );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let message = 'Oops!';
+  let details = 'An unexpected error occurred.';
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? '404' : 'Error';
     details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+      error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
