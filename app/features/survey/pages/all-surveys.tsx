@@ -36,7 +36,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
   }
 };
 export default function AllSruveys({loaderData}: Route.ComponentProps) {
-  const [surveys, setSurveys] = useState<surveyMeta[]>([]);
+  const [surveys, setSurveys] = useState<surveyMeta[]>(loaderData || []);
   const onChainLoader = async () => {
     const client = createPublicClient({
       chain: kairos,

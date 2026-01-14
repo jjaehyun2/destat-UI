@@ -49,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <>
-      <div className="  flex justify-center items-center py-20 px-20">
+      <div className="flex flex-col min-h-screen pt-24 px-6 md:px-10 lg:px-20 pb-10">
         <WagmiProvider config={config}>
           <QueryClientProvider client={queryClient}>
             <Navigation />

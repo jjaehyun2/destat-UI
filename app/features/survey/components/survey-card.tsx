@@ -26,18 +26,19 @@ export default function SurveyCard({
   address: string;
 }) {
   return (
-    <Link to={`/survey/${address}`}>
-      <Card className="max-w-92">
+    // 전체를 감싸는 Link를 유지하되, 내부 Button에서는 Link를 제거하고 구조를 단순화합니다.
+    <Link to={`/survey/${address}`} className="block transition-transform hover:scale-[1.02]">
+      <Card className="max-w-92 h-full flex flex-col">
         <CardHeader>
-          <div className="flex flex-row justify-between items-center">
-            <CardTitle>{title}</CardTitle>
-            <div className="flex flex-row gap-2">
-              <div className="flex flex-row text-xs gap-0.5">
-                <EyeIcon size={17} />
+          <div className="flex flex-row justify-between items-start gap-2">
+            <CardTitle className="line-clamp-1">{title}</CardTitle>
+            <div className="flex flex-row gap-2 shrink-0 text-muted-foreground">
+              <div className="flex items-center text-xs gap-0.5">
+                <EyeIcon size={14} />
                 {view}
               </div>
-              <div className="flex flex-row text-xs gap-0.5">
-                <UsersIcon size={17} />
+              <div className="flex items-center text-xs gap-0.5">
+                <UsersIcon size={14} />
                 {count}
               </div>
             </div>
@@ -46,12 +47,14 @@ export default function SurveyCard({
             {description}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <img className="rounded-2xl w-2xl" src={image} />
+        <CardContent className="flex-1">
+          {/* w-2xl 대신 w-full과 aspect-video 등을 사용합니다. */}
+          <img className="rounded-xl w-full aspect-video object-cover" src={image} />
         </CardContent>
         <CardFooter>
-          <Button className="w-full">
-            <Link to={`/survey/${address}`}>Join</Link>
+          {/* 이미 카드 전체가 Link이므로 Button 내부의 Link는 제거합니다. */}
+          <Button className="w-full" asChild>
+            <span>Join Survey</span>
           </Button>
         </CardFooter>
       </Card>

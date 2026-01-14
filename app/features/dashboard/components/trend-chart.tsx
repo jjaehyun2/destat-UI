@@ -25,7 +25,7 @@ interface ChartData {
 
 const chartConfig = {
   data: {
-    label: "Datat",
+    label: "Data",
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
@@ -74,9 +74,9 @@ export function TrendCharts({
             <Area
               dataKey="data"
               type="natural"
-              fill="var(--color-desktop)"
+              fill="var(--color-data)"
               fillOpacity={0.4}
-              stroke="var(--color-desktop)"
+              stroke="var(--color-data)"
             />
           </AreaChart>
         </ChartContainer>
