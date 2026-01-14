@@ -10,7 +10,17 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
+import { Input } from "~/components/ui/input";
 import MessageBubble from "../components/message-bubble";
+import type { Route } from "./+types/survey";
+
+export const action = async ({ request }: Route.ActionArgs) => {
+  const formData = await request.formData();
+  const answers = Object.fromEntries(formData);
+  console.log(Object.values(answers).map((str) => Number(str)));
+};
+
+
 
 interface questions {
   question: string;
