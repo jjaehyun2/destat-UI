@@ -1,26 +1,24 @@
-import { ReceiptRussianRuble, SendIcon, User2Icon } from "lucide-react";
-import { supabase } from "~/postgres/supaclient";
-import { Form} from "react-router";
+import { SendIcon } from "lucide-react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Form } from "react-router";
+import { useAccount, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Button } from "~/components/ui/button";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardAction,
-  CardContent,
-  CardFooter,
 } from "~/components/ui/card";
-import MessageBubble from "../components/message-bubble";
 import { Input } from "~/components/ui/input";
+import MessageBubble from "../components/message-bubble";
+import { SURVEY_ABI } from "~/features/survey/constant";
+import { supabase } from "~/postgres/supaclient";
 import type { Route } from "./+types/survey";
-import React, { useEffect, useState } from "react";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { SURVEY_ABI } from "../constant";
 
 export const loader = async ({ params }: Route.ComponentProps) => {
   const id = params.surveyId;
-  await supabase.rpc("increment_survey_view", { p_id: id });
 };
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
@@ -168,7 +166,7 @@ export default function Survey({ params }: Route.ComponentProps) {
             <h1 className="font-semibold text-xl pb-4">Survey Progress</h1>
             <div className="gap-5 grid grid-cols-2">
               {questions?.map((q, i) => (
-                <div className="flex flex-col">
+                <div key={i}className="flex flex-col">
                   <h1 className="font-bold">{q.question}</h1>
                   <div className="flex flex-col pl-2 gap-1">
                     {q.options.map((o, j) => (

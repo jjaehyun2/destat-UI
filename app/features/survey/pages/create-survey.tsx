@@ -60,6 +60,15 @@ export default function CreateSruveys() {
     options: string[];
   }
   const createSurvey = (e: React.FormEvent<HTMLFormElement>) => {
+
+    e.preventDefault();
+
+    // 2. 지갑 연결 여부 확인
+    if (!address) {
+      alert("Please connect your wallet first.");
+      return;
+    }
+    
     const formData = new FormData(e.currentTarget);
     const questionsData = formData.getAll("Question") as string[];
     const questions = questionsData.map((q, i) => {
