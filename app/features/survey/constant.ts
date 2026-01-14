@@ -1,4 +1,4 @@
-export const SURVEY_FACTORY = "0x6Dd38D70841A1b840dcfe3216D43B81cEc10d05c";
+export const SURVEY_FACTORY = "0x5FbDB2315678afecb367f032d93F642f64180aa3c";
 export const SURVEY_FACTORY_ABI = [
   {
     inputs: [
