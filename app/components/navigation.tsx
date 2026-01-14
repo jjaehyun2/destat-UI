@@ -7,6 +7,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
   NavigationMenuViewport,
 } from "~/components/ui/navigation-menu";
 import { Button } from "./ui/button";
@@ -39,7 +40,9 @@ export default function Navigation() {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink>Dashboard</NavigationMenuLink>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link to="/docs">Dashboard</Link>
+          </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Survey</NavigationMenuTrigger>

@@ -1,6 +1,6 @@
 import { User2Icon } from "lucide-react";
 
-export default function MessageButtle({ sender }: { sender: boolean }) {
+export default function MessageBubble({ sender }: { sender: boolean }) {
   return (
     <div>
       {sender ? (
