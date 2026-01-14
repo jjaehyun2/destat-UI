@@ -19,6 +19,7 @@ import type { Route } from "./+types/survey";
 
 export const loader = async ({ params }: Route.ComponentProps) => {
   const id = params.surveyId;
+  await supabase.rpc("increment_survey_view", );
 };
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
