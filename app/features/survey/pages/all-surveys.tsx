@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import SurveyCard from "../components/survey-card";
-import { SURVEY_ABI, SURVEY_FACTORY, SURVEY_FACTORY_ABI } from "../constant";
-import { useReadContract } from "wagmi";
-import { createPublicClient, getContract, http } from "viem";
-import { hardhat, kairos } from "viem/chains";
-import { supabase } from "~/postgres/supaclient";
-import { type Database } from "database.types";
+import SurveyCard from '../components/survey-card';
+import { createPublicClient, http, getContract } from 'viem';
+import { hardhat } from 'viem/chains';
+import { SURVEY_FACTORY, SURVEY_FACTORY_ABI, SURVEY_ABI } from '../constant';
+import { useEffect, useState } from 'react';
+import type { Route } from './+types/all-surveys';
+import { supabase } from '~/postgres/supaclient';
+import Survey from './survey';
 
-type SurveyRow = Database["public"]["Tables"]["survey"]["Row"];
-interface surveyMeta {
+/*
+interface SurveyMeta {
   title: string;
   description: string;
   count: number;
@@ -16,20 +16,44 @@ interface surveyMeta {
   image: string | null;
   address: string;
 }
-export default function AllSruveys() {
-  const [surveys, setSurveys] = useState<surveyMeta[]>([]);
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+  const { data, error } = await supabase.from('all_survey_overview').select('*');
+  if (!error) {
+    return data.map((s) => {
+      return {
+        title: s.title!,
+        description: s.description!,
+        view: s.view,
+        count: s.count!,
+        image: s.image,
+        address: s.id!,
+      };
+    });
+  } else {
+    return [];
+  }
+};
+export default function Allsurvey({ loaderData }: Route.ComponentProps) {
+  // const { data } = useReadContract({
+  //   address: SURVEY_FACTORY,
+  //   abi: SURVEY_FACTORY_ABI,
+  //   functionName: 'getSurveys',
+  //   args: [],
+  // });
+  const [surveys, setSurveys] = useState<SurveyMeta[]>(loaderData);
   const onChainLoader = async () => {
     const client = createPublicClient({
-      chain: kairos,
+      chain: hardhat,
       transport: http(),
     });
-    const surveyFactroyContract = getContract({
+    const surveyFactoryContract = getContract({
       address: SURVEY_FACTORY,
       abi: SURVEY_FACTORY_ABI,
       client,
     });
-    const surveys = await surveyFactroyContract.read.getSurveys();
-    const surveyMetadata = await Promise.all(
+    const surveys = await surveyFactoryContract.read.getSurveys();
+    const surveyMetaData = await Promise.all(
       surveys.map(async (surveyAddress) => {
         const surveyContract = getContract({
           address: surveyAddress,
@@ -39,118 +63,78 @@ export default function AllSruveys() {
         const title = await surveyContract.read.title();
         const description = await surveyContract.read.description();
         const answers = await surveyContract.read.getAnswers();
-        const { data, error } = await supabase
-          .from("survey")
-          .select("image, view")
-          .eq("id", surveyAddress)
-          .single(); // ← row 하나면 single()이 안정적임
-
-        if (error) {
-          console.error("Failed to load survey:", error);
-          return {
-            title,
-            description,
-            count: answers.length,
-            view: 1600,
-            image:
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
-            address: surveyAddress,
-          };
-        }
-
-        const image =
-            data.image ??
-            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/1.gif";
-        const view = data.view ?? 1600;
-
         return {
           title,
           description,
           count: answers.length,
-          view,
-          image,
+          view: null,
+          image: null,
           address: surveyAddress,
         };
-      }),
+      })
     );
-    return surveyMetadata;
+    return surveyMetaData;
   };
 
-  const offChainLoader = async (): Promise<surveyMeta[]> => {
-    const { data, error } = await supabase.from("survey").select("*");
-    if (error) {
-      console.error("Failed to load surveys:", error);
-      return []; // 혹은 throw error 해서 상위에서 처리
-    }
-
-    if (!data) return [];
-    const surveys = data as SurveyRow[];
-
-    const surveyMetadata = surveys.map((survey) => ({
-      title: survey.title,
-      description: survey.description,
-      count: 10,
-      view: survey.view ?? 1600,
-      image: survey.image,
-      address: survey.id,
-    }));
-    return surveyMetadata;
-    // return [
-    //   {
-    //     title: "New Survey",
-    //     description: "Override test",
-    //     count: 10,
-    //     view: 1600,
-    //     image:
-    //       "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/1.gif",
-    //     address: "",
-    //   },
-    // ];
+  const offChainLoader = async (): Promise<SurveyMeta[]> => {
+    return [
+      {title : "New Survey",
+      description: "test",
+      count: 0,
+      view: 1000,
+      image: null,
+      address: "",
+      },
+    ];
   };
-  // useEffect(() => {
-  //   const onChaindata = async () => {
-  //     await new Promise((resolve) => setTimeout(resolve, 3000));
-  //     const onchainSurveys = await onChainLoader();
-  //     setSurveys(onchainSurveys);
-  //   };
-  //   onChaindata();
-  //   const offChaindata = async () => {
-  //     const offchainSurveys = await offChainLoader();
-  //     setSurveys(offchainSurveys);
-  //   };
-  //   offChaindata();
-  // }, []);
-  useEffect(() => {
-    (async () => {
-      // 1) 오프체인 먼저
-      const offchainSurveys = await offChainLoader();
-      setSurveys(offchainSurveys);
-      // 2) 그 다음 온체인으로 덮어쓰기 (성공하면)
-      try {
-        const onchainSurveys = await onChainLoader();
-        setSurveys(onchainSurveys);
-      } catch (e) {
-        console.error("onChainLoader failed, keep offchain data:", e);
-      }
-    })();
-  }, []);
 
-  return (
-    <div className="grid grid-cols-4 gap-4 overflow-y-auto h-[90vh]">
+   useEffect(() => {
+     const onChainData = async () => {
+       const onchainSurveys = await onChainLoader();
+       await new Promise((resolve) => setTimeout(resolve, 3000));
+       setSurveys(onchainSurveys);
+     };
+     onChainData();
+   }, []);
+  
+  
+  
+   return (
+    <div className="grid grid-cols-4 gap-4">
       <div className="flex flex-col justify-center items-center">
         <h1 className="text-2xl font-extrabold">Live Surveys</h1>
-        <span className="font-light"> Join the surveys!</span>
+        <span className="font-light">Join the surveys</span>
       </div>
-      {surveys.map((survey) => (
+      {surveys.map((s) => (
         <SurveyCard
-          title={survey.title}
-          description={survey.description}
-          view={survey.view!}
-          count={survey.count}
-          image={survey.image!}
-          address={survey.address}
+          title={s.title}
+          description={s.description}
+          view={150}
+          count={s.count}
+          image={s.image!}
+          address={s.address}
         />
       ))}
     </div>
   );
+}
+  
+*/export default function AllSurvey() {
+  return (
+    <div className="grid grid-cols-4 gap-4">
+      <div className="flex flex-col justify-center items-center">
+        <h1 className="text-2xl font-extrabold">Live Surveys</h1>
+        <span className="font-light">Join the surveys</span>
+      </div>
+      {Array.from({ length: 10 }).map(() => (
+        <SurveyCard
+        title="Sample Survey"
+        description="This is a sample survey. Let's join to get Rewards"
+        view={150}
+        count={10}
+        image="https://avatars.githubusercontent.com/u/62927029?v=4"
+        address="sample-address"/>))}
+    </div>
+  );
+      
 }

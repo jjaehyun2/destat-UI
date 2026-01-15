@@ -51,7 +51,7 @@ export default function SurveyCard({
         </CardContent>
         <CardFooter>
           <Button className="w-full">
-            <Link to={`/survey/${address}`}>Join</Link>
+            <Link to={`/survey/${address}`}>Join</Link> 
           </Button>
         </CardFooter>
       </Card>

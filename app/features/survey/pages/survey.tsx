@@ -19,7 +19,7 @@ import type { Route } from "./+types/survey";
 
 export const loader = async ({ params }: Route.ComponentProps) => {
   const id = params.surveyId;
-  await supabase.rpc("increment_survey_view", );
+  await supabase.rpc("increment_survey_view", {survey_id: id} );
 };
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
@@ -159,8 +159,8 @@ export default function Survey({ params }: Route.ComponentProps) {
     <div className="grid grid-cols-3 gap-3 ">
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle className="font-extrabold text-3xl">{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle className="font-extrabold text-3xl">Sample Survey</CardTitle>
+          <CardDescription>This is Sample survey</CardDescription>
         </CardHeader>
         {isAnswered ? (
           <CardContent className="overflow-y-auto h-[70vh]">
