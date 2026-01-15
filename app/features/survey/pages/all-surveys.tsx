@@ -6,7 +6,6 @@ import { createPublicClient, getContract, http } from "viem";
 import { hardhat, kairos } from "viem/chains";
 import { supabase } from "~/postgres/supaclient";
 import { type Database } from "database.types";
-import type { Route } from "./+types/all-surveys";
 
 type SurveyRow = Database["public"]["Tables"]["survey"]["Row"];
 interface surveyMeta {
@@ -17,26 +16,8 @@ interface surveyMeta {
   image: string | null;
   address: string;
 }
-
-export const loader = async ({ request }: Route.LoaderArgs) => {
-  const { data, error } = await supabase.from('all_survey_overview').select('*');
-  if (!error) {
-    return data.map((s) => {
-      return {
-        title: s.title!,
-        description: s.description!,
-        view: s.view,
-        count: s.count!,
-        image: s.image,
-        address: s.id!,
-      };
-    });
-  } else {
-    return [];
-  }
-};
-export default function AllSruveys({loaderData}: Route.ComponentProps) {
-  const [surveys, setSurveys] = useState<surveyMeta[]>(loaderData || []);
+export default function AllSruveys() {
+  const [surveys, setSurveys] = useState<surveyMeta[]>([]);
   const onChainLoader = async () => {
     const client = createPublicClient({
       chain: kairos,
@@ -62,7 +43,7 @@ export default function AllSruveys({loaderData}: Route.ComponentProps) {
           .from("survey")
           .select("image, view")
           .eq("id", surveyAddress)
-          .single();
+          .single(); // ← row 하나면 single()이 안정적임
 
         if (error) {
           console.error("Failed to load survey:", error);
@@ -99,7 +80,7 @@ export default function AllSruveys({loaderData}: Route.ComponentProps) {
     const { data, error } = await supabase.from("survey").select("*");
     if (error) {
       console.error("Failed to load surveys:", error);
-      return []; 
+      return []; // 혹은 throw error 해서 상위에서 처리
     }
 
     if (!data) return [];
@@ -141,8 +122,10 @@ export default function AllSruveys({loaderData}: Route.ComponentProps) {
   // }, []);
   useEffect(() => {
     (async () => {
+      // 1) 오프체인 먼저
       const offchainSurveys = await offChainLoader();
       setSurveys(offchainSurveys);
+      // 2) 그 다음 온체인으로 덮어쓰기 (성공하면)
       try {
         const onchainSurveys = await onChainLoader();
         setSurveys(onchainSurveys);
