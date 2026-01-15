@@ -49,16 +49,16 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     .order("created_at");
   
   let formedLivedSurveyCount = [{ date: "", data: 0 }];
-  if (liveSurveyCount) {
-    formedLivedSurveyCount = liveSurveyCount
-      .filter((c) => c.created_at !== null)
-      .map((c) => {
-        return {
-          date: c.created_at,
-          data: c.count,
-        };
-      });
-  }
+if (liveSurveyCount) {
+  formedLivedSurveyCount = liveSurveyCount
+    .filter((c): c is typeof c & { created_at: string } => c.created_at !== null)
+    .map((c) => {
+      return {
+        date: c.created_at,
+        data: c.count,
+      };
+    });
+}
   const numberCard = await getNumberData(
     lastWeekStart,
     thisWeekStart,
