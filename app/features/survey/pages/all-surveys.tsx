@@ -7,7 +7,7 @@ import type { Route } from './+types/all-surveys';
 import { supabase } from '~/postgres/supaclient';
 import Survey from './survey';
 
-/*
+
 interface SurveyMeta {
   title: string;
   description: string;
@@ -119,7 +119,9 @@ export default function Allsurvey({ loaderData }: Route.ComponentProps) {
   );
 }
   
-*/export default function AllSurvey() {
+
+
+/*export default function AllSurvey() {
   return (
     <div className="grid grid-cols-4 gap-4">
       <div className="flex flex-col justify-center items-center">
@@ -138,3 +140,4 @@ export default function Allsurvey({ loaderData }: Route.ComponentProps) {
   );
       
 }
+  */
