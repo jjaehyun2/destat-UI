@@ -47,6 +47,7 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
     .from("daily_live_survey")
     .select("count, created_at")
     .order("created_at");
+  
   let formedLivedSurveyCount = [{ date: "", data: 0 }];
   if (liveSurveyCount) {
     formedLivedSurveyCount = liveSurveyCount

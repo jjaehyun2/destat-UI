@@ -10,7 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navigation from "./components/navigation";
-import { createModal, getDefaultConfig } from "@rabby-wallet/rabbykit";
+import { createModal } from "@rabby-wallet/rabbykit";
 import { createConfig, http } from "@wagmi/core";
 import { hardhat, kairos } from "@wagmi/core/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

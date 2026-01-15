@@ -34,49 +34,49 @@ interface Question {
 
 const questions: Question[] = [
   {
-    question: "오늘의 기분은 어떤가요?",
-    options: ["매우 나쁨", "나쁨", "보통", "좋음", "매우 좋음"],
+    question: "하루 평균 물 섭취량은?",
+    options: ["500ml 미만", "500ml~1L", "1L~1.5L", "1.5L~2L", "2L 이상"],
   },
   {
-    question: "가족과의 대화 빈도는?",
-    options: ["거의 없음", "가끔", "보통", "자주", "매우 자주"],
+    question: "하루 평균 수면 시간은?",
+    options: ["5시간 미만", "5~6시간", "6~7시간", "7~8시간", "8시간 이상"],
   },
   {
-    question: "오늘 하루 스트레스 정도는?",
-    options: ["전혀 없음", "조금 있음", "보통", "많음", "매우 많음"],
+    question: "일주일 평균 외식(배달 포함) 횟수는?",
+    options: ["0회", "1~2회", "3~4회", "5~6회", "매일"],
   },
   {
-    question: "수면의 질은 어떤가요?",
-    options: ["매우 나쁨", "나쁨", "보통", "좋음", "매우 좋음"],
+    question: "하루 평균 스마트폰 사용 시간은?",
+    options: ["1시간 미만", "1~3시간", "3~5시간", "5~7시간", "7시간 이상"],
   },
   {
-    question: "하루 평균 운동 시간은?",
+    question: "하루 평균 독서(전자책 포함) 시간은?",
     options: ["하지 않음", "30분 미만", "1시간 미만", "1~2시간", "2시간 이상"],
   },
   {
-    question: "오늘 집중력은 어땠나요?",
-    options: ["매우 낮음", "낮음", "보통", "높음", "매우 높음"],
+    question: "하루 중 가장 집중력이 높은 시간대는?",
+    options: ["이른 아침", "오전", "오후", "저녁", "심야"],
   },
   {
-    question: "가족과의 관계를 표현하자면?",
-    options: ["거리감 있음", "조금 서먹함", "보통", "가깝다", "매우 가깝다"],
+    question: "하루 평균 카페인 섭취량은?",
+    options: ["마시지 않음", "1잔", "2잔", "3잔", "4잔 이상"],
   },
   {
-    question: "현재 에너지 수준은?",
-    options: ["매우 피곤함", "조금 피곤함", "보통", "활기참", "매우 활기참"],
+    question: "주말 휴식 시 선호하는 장소는?",
+    options: ["집(침대/소파)", "카페", "공원이나 야외", "영화관/쇼핑몰", "여행지"],
   },
   {
-    question: "오늘 하루를 한 단어로 표현한다면?",
-    options: ["지침", "평범", "보람", "즐거움", "감사함"],
+    question: "자신의 삶에 대한 전반적인 만족도는?",
+    options: ["매우 불만족", "불만족", "보통", "만족", "매우 만족"],
   },
   {
-    question: "전반적인 행복도를 선택해주세요.",
-    options: ["매우 낮음", "낮음", "보통", "높음", "매우 높음"],
+    question: "새로운 정보를 얻는 주된 경로는?",
+    options: ["뉴스/신문", "SNS(인스타그램 등)", "유튜브", "커뮤니티/블로그", "지인"],
   },
 ];
 
 export default function Survey({ params }: Route.ComponentProps) {
-  const { data: questions } = useReadContract({
+  const { data: contractQuestions } = useReadContract({
     address: params.surveyId as `0x{string}`,
     abi: SURVEY_ABI,
     functionName: "getQuestion",

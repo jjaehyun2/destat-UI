@@ -7,7 +7,7 @@ import type { Route } from './+types/all-surveys';
 import { supabase } from '~/postgres/supaclient';
 import Survey from './survey';
 
-
+/*
 interface SurveyMeta {
   title: string;
   description: string;
@@ -118,17 +118,17 @@ export default function Allsurvey({ loaderData }: Route.ComponentProps) {
     </div>
   );
 }
-  
+*/
 
 
-/*export default function AllSurvey() {
+export default function AllSurvey() {
   return (
     <div className="grid grid-cols-4 gap-4">
       <div className="flex flex-col justify-center items-center">
         <h1 className="text-2xl font-extrabold">Live Surveys</h1>
         <span className="font-light">Join the surveys</span>
       </div>
-      {Array.from({ length: 10 }).map(() => (
+      {Array.from({ length: 4 }).map(() => (
         <SurveyCard
         title="Sample Survey"
         description="This is a sample survey. Let's join to get Rewards"
@@ -140,4 +140,4 @@ export default function Allsurvey({ loaderData }: Route.ComponentProps) {
   );
       
 }
-  */
+  
